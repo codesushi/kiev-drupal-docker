@@ -1,0 +1,50 @@
+version: '2'
+services:
+    
+    db8:
+        image: mysql
+        environment:
+            MYSQL_USER: drupal
+            MYSQL_PASSWORD: drupal
+            MYSQL_DATABASE: drupal8
+            MYSQL_ROOT_PASSWORD: drupal
+        volumes:
+            - ./data8:/var/lib/mysql
+
+    db7:
+        image: mysql
+        environment:
+            MYSQL_USER: drupal
+            MYSQL_PASSWORD: drupal
+            MYSQL_DATABASE: drupal7
+            MYSQL_ROOT_PASSWORD: drupal
+        volumes:
+            - ./data7:/var/lib/mysql
+
+    drupal8:
+        build: 
+            dockerfile: Dockerfile-d8
+            context: .
+        volumes:
+            - ./d7:/var/www/d7
+            - ./d8:/var/www/d8
+            - ./apache-conf/d8.conf:/etc/apache2/sites-enabled/000-default.conf
+            - ./docker/php7/local.ini:/usr/local/etc/php/conf.d/local.ini
+        ports:
+            - 8250:80
+        links:
+            - db8
+
+    drupal7:
+        build: 
+            dockerfile: Dockerfile-d7
+            context: .
+        volumes:
+            - ./d7:/var/www/d7
+            - ./apache-conf/d7.conf:/etc/apache2/sites-enabled/000-default.conf
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        ports:
+            - 8251:80
+        links:
+            - db8
+
